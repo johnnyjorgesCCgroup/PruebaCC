@@ -9,15 +9,40 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // Lógica de autenticación (puedes implementar la autenticación real aquí)
-    // Simulamos un inicio de sesión exitoso para el usuario 'admin' con contraseña 'admin123'
-    if (username === 'admin' && password === 'admin123') {
-      login();
-      navigate('/'); // Redirige a la página principal después del inicio de sesión
-    } else {
-      setError('Nombre de usuario o contraseña incorrectos');
+  const handleLogin = async () => {
+
+    try{
+
+     
+      const loginResponse = await fetch('http://161.132.40.129/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({  
+          email: username , 
+          password: password
+        }),
+      });
+      console.log(loginResponse , loginResponse.status);
+
+      if (!loginResponse.ok) {
+        throw new Error(`Error al iniciar sesión. Status: ${loginResponse.status}`);
+      }
+      const loginData = await loginResponse.json();
+      console.log('Datos de inicio de sesión:', loginData);
+    } catch (error) {
+      console.error( error);
     }
+
+
+     if (username === 'admin' && password === 'admin123') {
+       login();
+    navigate('/'); // Redirige a la página principal después del inicio de sesión
+     } else {
+      setError('Nombre de usuario o contraseña incorrectos');
+      }
+
   };
 
   const styles = {

@@ -82,8 +82,7 @@ const Menu = () => {
             role="menu"
             data-accordion="true"
           >
-            {/* Add icons to the links using the .nav-icon class
-             with font-awesome or any other icon font library */}
+
             <li className="nav-item">
 
               <ul className="nav nav-treeview" >
@@ -124,13 +123,37 @@ const Menu = () => {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/product" className="nav-link">
+                  <Link to="/" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Productos</p>
                   </Link>
                 </li>
               </ul>
-            </li>           
+            </li>   
+
+                        <li className="nav-item">
+              <a href="#" className="nav-link">
+                <i className="nav-icon fas fa-solid fa-chart-simple" />
+                <p>
+                  Usuarios
+                  <i className="fas fa-angle-left right" />
+                </p>
+              </a>
+              <ul className="nav nav-treeview nav-pills nav-sidebar flex-column"
+                         ref={treeviewRef} // Asigna el ref al elemento que deseas seleccionar
+                         data-widget="treeview"
+                         role="menu"
+                         data-accordion="false"
+                         >
+                <li className="nav-item">
+                  <Link to="/user" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>Usuarios</p>
+                  </Link>
+                </li>
+              </ul>
+            </li> 
+
           </ul>
         </nav>
         {/* /.sidebar-menu */}
