@@ -4,6 +4,7 @@ import { useAuth } from './AuthContext';
 import IndexCategory from '../views/Category/Index';
 import IndexSubCategory from '../views/SubCategory/index';
 import IndexProduct from '../views/Product/index';
+import IndexUser from '../views/User/index';
 
 const ProtectedRoutes = () => {
   const { isLoggedIn } = useAuth();
@@ -15,9 +16,10 @@ const ProtectedRoutes = () => {
 
   return (
     <Routes>
-    <Route path="/" element={<IndexCategory />} />
+    <Route path="/" element={<IndexProduct />} />
+    <Route path="/category" element={<IndexCategory />}  />
     <Route path="/subcategory" element={<IndexSubCategory />} />
-    <Route path="/product" element={<IndexProduct />} />
+    <Route path="/user" element={<IndexUser />} />
     </Routes>
   );
 };

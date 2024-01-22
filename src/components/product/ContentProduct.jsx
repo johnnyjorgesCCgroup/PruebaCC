@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import MUIDataTable from 'mui-datatables';
 import { Button, IconButton, Modal, TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -11,18 +11,33 @@ import Grid from '@mui/material/Grid';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import OnlinePrediction from '@mui/icons-material/OnlinePrediction'
+import dayjs from 'dayjs';
 
+import {
+  GridRowModes,
+  DataGrid,
+  GridToolbarContainer,
+  GridActionsCellItem,
+  GridRowEditStopReasons,
+} from '@mui/x-data-grid';
+import {
+  randomCreatedDate,
+  randomTraderName,
+  randomId,
+  randomArrayItem,
+} from '@mui/x-data-grid-generator';
 
+import * as XLSX from 'xlsx';
 
 const ContentProduct = () => {
 
-  const [editCategory, setEditCategory] = useState(null);
-  const [editSubCategory, setEditSubCategory] = useState(null);
-
+  const [pdf, setPdf] = useState(null);
   const [subCategoryId, setsubCategoryIdy] = useState(null);
   const [selectSubCategory, setSelectSubCategory] = useState(null);
   const [select, setSelect] = useState(null);
-  const [selectEdit, setSelectEdit] = useState( null );
   const [date, setDate] = useState(null);
   const [data, setData] = useState([]);
   const [rows, setRows] = useState([]);
@@ -45,14 +60,8 @@ const ContentProduct = () => {
   //Avisa si es edit al componente
   const [editingMode, setEditingMode] = useState(false);
 
-
-  const options = {
-    filterType: 'checkbox',
-    print: false,
-    search: true, 
-  };
-
   useEffect(() => {
+
     fetchData();
     fetchDataSelect();
   }, [updateCount]);
@@ -64,9 +73,12 @@ const ContentProduct = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const valor = await response.json();
+
+
       setData(valor.data);
       updateTableRows(valor.data);
-
+      setPdf(valor.data);
+       
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -107,8 +119,6 @@ const ContentProduct = () => {
       ...prevProduct,
       'category_id': id,
     }));
-
-
     setSelectSubCategory(resultados_final);
 
   } catch (error) {
@@ -116,6 +126,29 @@ const ContentProduct = () => {
   }
   };
 
+
+  const fetchDataSelectSubCategoryEdit = async (id) => {
+    try {
+      console.log(id);
+    const response_category = await fetch('http://161.132.40.129/api/subcategory');
+    if (!response_category.ok) {
+      throw new Error(`HTTP error! Status: ${response_category.status}`);
+    }
+    const valor_select = await response_category.json();
+
+    const resultados =  valor_select.data.filter(objeto => objeto.category_id === id);
+ 
+    const resultados_final = resultados.map((item) => ({  
+      key: item.id,      
+      value: item.name 
+    }));     
+  
+    setSelectSubCategory(resultados_final);
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+  };
 
 
   const updateSelects = (data) => {  
@@ -149,7 +182,6 @@ const ContentProduct = () => {
       min_stock: item.min_stock,
       stock: item.stock,
     }));
-
     setRows(rows);
   };
 
@@ -209,21 +241,21 @@ const ContentProduct = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-
-              id: item.id,
-              name: item.name,
-              sku: item.sku,
-              purchase_price: item.purchase_price,
-              selling_price: item.selling_price,
-              entry_date: item.entry_date,
-              subcategory_id: subCategoryId,
-              unit: item.unit,
-              status: item.status,
-              initial_stock: item.initial_stock,
-              min_stock: item.min_stock,
-              stock: item.stock,  
+              id: newProduct.id,
+              name: newProduct.name,
+                purchase_price: newProduct.purchase_price,
+              selling_price: newProduct.selling_price,
+              entry_date: newProduct.entry_date,
+              category_id: newProduct.category_id,
+              subcategory_id: newProduct.subcategory_id,
+              unit: newProduct.unit,
+              status: newProduct.status,
+              initial_stock: newProduct.initial_stock,
+              min_stock: newProduct.min_stock,
+              stock: newProduct.stock,  
             }),
         });
+        console.log()
         handleCloseModal();
         setUpdateCount((prevCount) => prevCount + 1);
         fetchData(); // Actualiza los datos después de crear la categoría
@@ -242,11 +274,13 @@ const ContentProduct = () => {
 
   const handleEdit = async ( id ) => {
       const ProductToEdit = data.find((item) => item.id === id);
-      console.log(ProductToEdit);
+      fetchDataSelectSubCategoryEdit(ProductToEdit.category_id);
+      console.log(ProductToEdit, select , selectSubCategory );
+
       if (ProductToEdit) {
         setEditingMode(true);
         setOpenModal(true);
-        setNewProduct({ id: id ,  
+        setNewProduct({ id: ProductToEdit.id ,  
            name: ProductToEdit.name, 
            serie: ProductToEdit.serie ,
            status: ProductToEdit.status         ,  
@@ -265,6 +299,8 @@ const ContentProduct = () => {
 
 
   const handleCreateProduct = async () => {
+
+
     console.log("handleCreateProduct ; ", newProduct );
     try {
       setEditingMode(false);
@@ -305,10 +341,11 @@ const ContentProduct = () => {
       setUpdateCount((prevCount) => prevCount + 1);
       fetchData(); // Actualiza los datos después de crear la categoría
     } catch (error) {
+      setOpenModal(false);
       console.error('Error creating category:', error);
       Swal.fire({
         icon: 'error',
-        title: 'An error occurred while creating category!',
+        title: 'El Nombre de Producto ya existe!',
         showConfirmButton: false,
         timer: 1500,
       });
@@ -357,8 +394,9 @@ const ContentProduct = () => {
 
 }
 
-
 const getSku = async (event)  => {
+  console.log("Aqui Edicion :",editingMode);
+  if( editingMode == 0){
 try {
   console.log("holaXV:", subCategoryId);
 
@@ -375,9 +413,28 @@ try {
  console.log(error);
 
 } 
-
+}
 };
 
+
+
+const handleStatus = async (id)  => {
+  try {  
+    const response = await fetch(`http://161.132.40.129/api/product/statusUpdate/${id}`);
+    const valor = await response.json();
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      'status': valor.data.status,
+    }));
+    fetchData();
+   console.log("holaXVVVVVV:", valor.data.status);
+  } catch (error) {
+   // Si hay un error durante la solicitud
+   console.log(error);
+  
+  } 
+  
+  };
 const getSubCatId = async (event)  => {
   setNewProduct((prevProduct) => ({
     ...prevProduct,
@@ -387,90 +444,145 @@ const getSubCatId = async (event)  => {
 
 };
 
+const blobToFile = (blob, fileName) => {
+  const file = new File([blob], fileName, { type: blob.type });
+  return file;
+};
 
-  const columns = [
+  const handleDownload = () => {
+ 
+    // Crear un libro de Excel
+    console.log("pdf :",pdf);
+    const workbook = XLSX.utils.book_new();
+    const sheetData = pdf.map(item => [
+     `${item.sku.substring(0,1)}00`,
+      item.categoria,
+      item.sku.substring(0, 3),
+      item.subcategoria,
+      item.sku,
+      "NEW PROD",
+      item.name,
+      item.unit,
+      item.purchase_price,
+      "NEW PROD", 
+      item.entry_date,
+      item.updated_at,
+      item.status === 1 ? 'ACTIVO' : 'DESHABILITADO', // Modificado para mostrar "Activo" o "Inactivo"
+      "ACTUAL", 
+    ]);    
+    
+    const worksheet = XLSX.utils.aoa_to_sheet([['COD_CAT', 'CATEGORÍA', 'COD_SUB CAT', 'COD_SUB CAT', 'CÓDIGO', 'SKU  ', 'DESCRIPCIÓN', 'U.M.', 'COSTO', 'PROVEEDOR', 'ULT MODIFICACIÓN', 'USER' , 'ESTADO', 'PRICE STATUS' ], ...sheetData]);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
+
+    // Cambiado el tipo de blob a 'array' en lugar de 'blob'
+    const blob = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Convertir el blob a un objeto File
+    const file = blobToFile(new Blob([blob]), 'datos.xlsx');
+
+    // Crear un objeto URL para el blob del File
+    const url = URL.createObjectURL(file);
+
+    // Crear un enlace de descarga y hacer clic en él para iniciar la descarga
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'datos.xlsx';
+    document.body.appendChild(a);
+    a.click();
+
+    // Limpiar el objeto URL y el enlace
+    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
+
+const columns = [
     {
-      name: 'id',
-      label: 'Id',
+      field : 'id',
+      headerName: 'Id',
       options: {
         display: false,
-        searchable: true,
       },
+      width: 40,
     },
     {
-      name: 'name',
-      label: 'Nombre',
-      options: {
-        searchable: true,
-      },
+      field: 'name',
+      headerName: 'Nombre',
+      width: 320,
     },
     {
-      name: 'sku',
-      label: 'sku',
-      options: {
-        searchable: true,
-      },
-    },
+      field: 'sku',
+      headerName: 'sku',
 
+    },
     {
-      name: 'categoria',
-      label: 'categoria',
+      field: 'categoria',
+      headerName: 'categoria',
       options: {
         searchable: true,
       },
     },
-
     {
-      name: 'subcategoria',
-      label: 'subcategoria',
+      field: 'subcategoria',
+      headerName: 'subcategoria',
       options: {
         searchable: true,
       },
     },
     
     {
-      name: 'selling_price',
-      label: 'Precio de Venta',
-      options: {
-        searchable: true,
-      },
+      field: 'selling_price',
+      headerName: 'Precio de Venta',
+     
     },
     {
-        name: 'purchase_price',
-        label: 'Precio de Compra',
+      field: 'purchase_price',
+      headerName: 'Precio de Compra',
+  
+    },
+    {
+      field: 'unit',
+      headerName: 'Unidad',
+  
+    },
+    {
+      field: 'status',
+      headerName: 'status',
         options: {
           searchable: true,
         },
-    },
+      valueFormatter: (params) => (params.value === 1 ? 'ACTIVE' : 'INACTIVE'),
+
+    },   
+            
     {
-        name: 'status',
-        label: 'status',
-        options: {
-          searchable: true,
-        },
-    },           
-    {
-      name: 'Actions',
-      label: 'Acciones',
-      options: {
-        customBodyRender: (value, tableMeta) => (
-          <>
-            <IconButton
-              color="success"
-              onClick={() => handleEdit(tableMeta.rowData[0]  )  }
-              className="mx-2"
-            >
-              <FontAwesomeIcon icon={faEdit} />
-            </IconButton>
-            <IconButton
-              color="primary"
-              onClick={() => handleDelete(tableMeta.rowData[0])}
-              className="mx-2"
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </IconButton>
-          </>
-        ),
+      field: 'Actions',
+      type: 'actions',
+      width: 130,
+      headerName: 'Acciones',
+      cellClassName: 'actions',
+      getActions: ({ id }) => {
+        return [
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={() => handleEdit(id  )  }
+            color="success"
+          />,
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={() => handleDelete(id )}
+            color="warning"
+          />,
+          <GridActionsCellItem
+          icon={<OnlinePrediction />}
+          label="Status"
+          onClick={() => handleStatus(id )}
+          color="primary"
+        />,
+        ];  
       },
     },
   ];
@@ -509,6 +621,18 @@ const getSubCatId = async (event)  => {
                     <h3 className="card-title">Listado de Productos</h3>
                     <Button
                       variant="contained"
+                      color="success"
+                      startIcon={<FontAwesomeIcon icon={faPlusCircle} />}
+                      onClick={() => {
+                        handleDownload();
+                      }} 
+                    >
+                      Descargr Productos
+                    </Button>
+
+                    
+                    <Button
+                      variant="contained"
                       color="primary"
                       startIcon={<FontAwesomeIcon icon={faPlusCircle} />}
                       onClick={() => {
@@ -516,20 +640,17 @@ const getSubCatId = async (event)  => {
                         setOpenModal(true);
                         handleCreateProduct;
                         setNewProduct({ id:'' , name: '', sku: '' });
-
                       }} 
                     >
                       Crear Producto
                     </Button>
-
                     <Modal open={openModal} 
                           onClose={handleCloseModal}
                           >
                     <div style={style.modalContainer}>
                     <h2 style={{ textAlign: 'center', marginBottom: '20px' }}
                     >{editingMode ? 'Editar Producto' : 'Crear Nuevo Producto'}</h2>
-                    
-  
+              
                     <Grid container spacing={2} alignItems="center">
                         <TextField
                           label="id"
@@ -539,8 +660,7 @@ const getSubCatId = async (event)  => {
                           name="id"
                           value= {newProduct.id}
                           style={{ display: 'none' }}
-                        />
-                   
+                        />            
                    <Grid item xs={12} md={6}>
                         <InputLabel>SKU</InputLabel>
                         <TextField
@@ -550,20 +670,18 @@ const getSubCatId = async (event)  => {
                           variant="filled"
                         />
                     </Grid>
-
-
                     <Grid item xs={12} md={6}>
                     <InputLabel>Fecha de Ingreso</InputLabel>
 
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker 
-                                      value={newProduct.entry_date} 
-                                      onChange={  handleInputDate } />
+                          <DatePicker
+                            defaultValue={dayjs(new Date())}
+                            onChange={  handleInputDate }
+                             dateFormat="DD/MM/YYY" />
                       </LocalizationProvider>
                       </Grid>
                     </Grid>
-               
-
+              
                     <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12} md={6}>
                           <InputLabel id="demo-simple-select-standard-label">Categoria</InputLabel>
@@ -663,30 +781,7 @@ const getSubCatId = async (event)  => {
                     </Grid>
                     </Grid>
                      
-                    <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                          label="Stock Inicial"
-                          variant="outlined"
-                          fullWidth
-                          margin="normal"
-                          name="initial_stock"
-                          value={newProduct.initial_stock}
-                          onChange={  handleInputChange }
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                          label="Stock Minimo"
-                          variant="outlined"
-                          fullWidth
-                          margin="normal"
-                          name="min_stock"
-                          value={newProduct.min_stock}
-                          onChange={  handleInputChange }
-                        />
-                    </Grid>
-                    </Grid>
+
 
                         <div style={style.buttonContainer}>
 
@@ -694,7 +789,7 @@ const getSubCatId = async (event)  => {
                           variant="contained"
                           color="primary"
                           style={style.createButton}
-                          onClick={() => editingMode ? ConnectEdit(newCategory) : handleCreateProduct()}
+                          onClick={() => editingMode ? ConnectEdit(newProduct) : handleCreateProduct()}
                           > 
                             {editingMode ? 'Editar' : 'Crear'}
                         </Button>
@@ -718,9 +813,18 @@ const getSubCatId = async (event)  => {
                   <div className="row">
              
                     <div className="col-lg-12">
-                      <MUIDataTable columns={columns} data={data} options={options} />
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                          pagination: {
+                            paginationModel: { page: 0, pageSize: 50 },
+                          },
+                        }}
+                        pageSizeOptions={[5, 10]}
+                        
+                      />
                     </div>
-              
                   </div>
                 </div>
               </div>

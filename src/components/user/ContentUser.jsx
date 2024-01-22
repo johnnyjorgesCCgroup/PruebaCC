@@ -5,7 +5,7 @@ import { Button, IconButton, Modal, TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
-const ContentCategory = () => {
+const ContentUser = () => {
   const [data, setData] = useState([]);
   const [rows, setRows] = useState([]);
   const [updateCount, setUpdateCount] = useState(0);
@@ -27,7 +27,7 @@ const ContentCategory = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://161.132.40.129/api/category');
+      const response = await fetch('http://161.132.40.129/api/auth/index');
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -43,7 +43,7 @@ const ContentCategory = () => {
     const rows = data.map((item) => ({
       id: item.id,
       name: item.name,
-      serie: item.serie,
+      email: item.email,
     }));
 
     setRows(rows);
@@ -139,7 +139,7 @@ const ContentCategory = () => {
   const handleCreateCategory = async () => {
     try {
       setEditingMode(false);
-        const response = await fetch('http://161.132.40.129/api/category', {
+        const response = await fetch('http://161.132.40.129/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ const ContentCategory = () => {
 
       Swal.fire({
         icon: 'success',
-        title: 'Nueva Categoria Creada!',
+        title: 'Nuevo Usuario Creado!',
         showConfirmButton: false,
         timer: 1500,
       });
@@ -202,8 +202,8 @@ const ContentCategory = () => {
       },
     },
     {
-      name: 'serie',
-      label: 'Serie',
+      name: 'email',
+      label: 'email',
       options: {
         searchable: true,
       },
@@ -265,7 +265,7 @@ const ContentCategory = () => {
               <div className="card">
                 <div className="card-header border-0">
                   <div className="d-flex justify-content-between">
-                    <h3 className="card-title">Listado de Categorias</h3>
+                    <h3 className="card-title">Listado de Usuarios</h3>
                     <Button
                       variant="contained"
                       color="primary"
@@ -277,7 +277,7 @@ const ContentCategory = () => {
                         setNewCategory({ id:'' , name: '', serie: '' });
                       }} 
                     >
-                      Crear Categoría
+                      Crear Usuario
                     </Button>
 
                     <Modal open={openModal} 
@@ -285,7 +285,7 @@ const ContentCategory = () => {
                           >
                     <div style={style.modalContainer}>
                     <h2 style={{ textAlign: 'center', marginBottom: '20px' }}
-                    >{editingMode ? 'Editar Categoría' : 'Crear Nueva Categoría'}</h2>
+                    >{editingMode ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
 
                         <TextField
                           label="id"
@@ -307,16 +307,25 @@ const ContentCategory = () => {
                           onChange={ handleInputChange }
                         />
                         <TextField
-                          label="Serie"
+                          label="Email"
                           variant="outlined"
                           fullWidth
                           margin="normal"
-                          name="serie"
-                          value={newCategory.serie}
+                          name="email"
+                          value={newCategory.email}
+                          onChange={  handleInputChange }
+                        />
+                        <TextField
+                          label="Password"
+                          variant="outlined"
+                          fullWidth
+                          margin="normal"
+                          name="password"
+                          value={newCategory.password}
                           onChange={  handleInputChange }
                         />
                         <div style={style.buttonContainer}>
-
+                     
                         <Button
                           variant="contained"
                           color="primary"
@@ -395,4 +404,4 @@ const style  = {
   },
 };
 
-export default ContentCategory;
+export default ContentUser;

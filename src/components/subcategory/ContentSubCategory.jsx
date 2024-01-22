@@ -174,7 +174,7 @@ const ContentSubCategory = () => {
                 "category_id"  : newSubCategory.category_id,
             }),
         });
-        handleCloseModal();
+        setOpenModal(false)
         setUpdateCount((prevCount) => prevCount + 1);
         fetchData(); // Actualiza los datos después de crear la categoría
     } catch (error) {
@@ -238,6 +238,7 @@ const ContentSubCategory = () => {
       setUpdateCount((prevCount) => prevCount + 1);
       fetchData(); // Actualiza los datos después de crear la categoría
     } catch (error) {
+      setOpenModal(false)
       console.error('Error creating category:', error);
       Swal.fire({
         icon: 'error',
