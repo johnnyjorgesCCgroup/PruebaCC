@@ -4,8 +4,10 @@ import MUIDataTable from 'mui-datatables';
 import { Button, IconButton, Modal, TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../../components/AuthContext';
 
 const ContentCategory = () => {
+  const { token } = useAuth();
   const [data, setData] = useState([]);
   const [rows, setRows] = useState([]);
   const [updateCount, setUpdateCount] = useState(0);

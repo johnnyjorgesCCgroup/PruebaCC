@@ -11,40 +11,50 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-
-    try{
-
-     
+    try {
       const loginResponse = await fetch('http://161.132.40.129/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({  
-          email: username , 
-          password: password
+        body: JSON.stringify({
+          email: username,
+          password: password,
         }),
       });
-      console.log(loginResponse , loginResponse.status);
-
+  
       if (!loginResponse.ok) {
         throw new Error(`Error al iniciar sesión. Status: ${loginResponse.status}`);
       }
+  
       const loginData = await loginResponse.json();
-      console.log('Datos de inicio de sesión:', loginData);
-    } catch (error) {
-      console.error( error);
-    }
+      console.log('Respuesta de la API:', loginData);
+  
+      // Verificar si la respuesta de la API indica una autenticación exitosa
+      if (loginData.error) {
+        setError('Nombre de usuario o contraseña incorrectos');
+      } else {
+        // Si la autenticación es exitosa, realiza el login
+        
+        login();
+
+        // Almacena el token en sessionStorage
+        sessionStorage.setItem('token', loginData.access_token);
+
+        // Muestra el token en la consola
+        console.log('Token almacenado en sessionStorage:', loginData.token);
 
 
-     if (username === 'admin' && password === 'admin123') {
-       login();
-    navigate('/'); // Redirige a la página principal después del inicio de sesión
-     } else {
-      setError('Nombre de usuario o contraseña incorrectos');
+        navigate('/');
       }
-
+  
+    } catch (error) {
+      // Mostrar el mensaje de error en la pantalla
+      setError('Usuario o Contraseña Incorrecta');
+      console.error(error);
+    }
   };
+  
 
   const passwordVisibleUpdate = () => {
     setShowPassword(!showPassword);
@@ -221,7 +231,8 @@ const Login = () => {
               No tienes una cuenta? <span style={styles.spanCadastrarSe}>Regístrate</span>
             </Link>
           </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          <br></br>
+          {error && <p style={{ color: 'red' }}><i className="fas fa-square-xmark"></i> {error}</p>}
         </div>
       </div>
     </div>
