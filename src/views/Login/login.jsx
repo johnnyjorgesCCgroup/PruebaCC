@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../components/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -6,6 +6,7 @@ const Login = () => {
   const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -18,6 +19,10 @@ const Login = () => {
     } else {
       setError('Nombre de usuario o contraseña incorrectos');
     }
+  };
+
+  const passwordVisibleUpdate = () => {
+    setShowPassword(!showPassword);
   };
 
   const styles = {
@@ -71,7 +76,6 @@ const Login = () => {
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'flex-start',
       justifyContent: 'center',
       margin: '10px 0px',
     },
@@ -79,7 +83,7 @@ const Login = () => {
       width: '100%',
       border: 'none',
       borderRadius: '10px',
-      padding: '15px',
+      padding: '25px',
       background: '#514869',
       color: '#f0ffffde',
       fontSize: '12pt',
@@ -98,6 +102,21 @@ const Login = () => {
       width: '100%',
       padding: '16px 0px',
       margin: '25px',
+      border: 'none',
+      borderRadius: '8px',
+      outline: 'none',
+      textTransform: 'uppercase',
+      fontWeight: 800,
+      letterSpacing: '3px',
+      color: '#2b134b',
+      background: '#0f8',
+      cursor: 'pointer',
+      boxShadow: '0px 10px 40px -12px #00ff8052',
+    },
+    btnViewContrasena: {
+      width: '20%',
+      padding: '16px 0px',
+      margin: '0 0 0 20px',
       border: 'none',
       borderRadius: '8px',
       outline: 'none',
@@ -158,13 +177,16 @@ const Login = () => {
             <label htmlFor="senha" style={styles.textFieldLabel}>
               Contraseña
             </label>
+            <div style={{display:'flex'}}>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={styles.textFieldInput}
             />
+            <button type='submit' onClick={passwordVisibleUpdate} style={styles.btnViewContrasena}><i className='fas fa-eye'></i></button>
+            </div>
           </div>
           <button onClick={handleLogin} style={styles.btnLogin}>
             ENTRAR
