@@ -395,6 +395,8 @@ const ContentProduct = () => {
 }
 
 const getSku = async (event)  => {
+  console.log("Aqui Edicion :",editingMode);
+  if( editingMode == 0){
 try {
   console.log("holaXV:", subCategoryId);
 
@@ -411,7 +413,7 @@ try {
  console.log(error);
 
 } 
-
+}
 };
 
 
