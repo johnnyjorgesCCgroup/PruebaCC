@@ -22,39 +22,39 @@ const Login = () => {
           password: password,
         }),
       });
-  
+
       if (!loginResponse.ok) {
         throw new Error(`Error al iniciar sesión. Status: ${loginResponse.status}`);
       }
-  
+
       const loginData = await loginResponse.json();
       console.log('Respuesta de la API:', loginData);
-  
+
       // Verificar si la respuesta de la API indica una autenticación exitosa
       if (loginData.error) {
         setError('Nombre de usuario o contraseña incorrectos');
       } else {
         // Si la autenticación es exitosa, realiza el login
-        
+
         login();
 
-        // Almacena el token en sessionStorage
-        sessionStorage.setItem('token', loginData.access_token);
+        // Almacena el token en localStorage
+        localStorage.setItem('token', loginData.access_token);
 
         // Muestra el token en la consola
-        console.log('Token almacenado en sessionStorage:', loginData.token);
+        console.log('Token almacenado en LocalStorage:', loginData.token);
 
 
         navigate('/');
       }
-  
+
     } catch (error) {
       // Mostrar el mensaje de error en la pantalla
       setError('Usuario o Contraseña Incorrecta');
       console.error(error);
     }
   };
-  
+
 
   const passwordVisibleUpdate = () => {
     setShowPassword(!showPassword);
@@ -212,15 +212,15 @@ const Login = () => {
             <label htmlFor="senha" style={styles.textFieldLabel}>
               Contraseña
             </label>
-            <div style={{display:'flex'}}>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={styles.textFieldInput}
-            />
-            <button type='submit' onClick={passwordVisibleUpdate} style={styles.btnViewContrasena}><i className='fas fa-eye'></i></button>
+            <div style={{ display: 'flex' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={styles.textFieldInput}
+              />
+              <button type='submit' onClick={passwordVisibleUpdate} style={styles.btnViewContrasena}><i className='fas fa-eye'></i></button>
             </div>
           </div>
           <button onClick={handleLogin} style={styles.btnLogin}>

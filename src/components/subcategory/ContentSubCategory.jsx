@@ -7,6 +7,7 @@ import { faTrash, faEdit, faPlusCircle } from '@fortawesome/free-solid-svg-icons
 import CreatableSelect from 'react-select/creatable';
 
 const ContentSubCategory = () => {
+  
   const [data, setData] = useState([]);
   const [rows, setRows] = useState([]);
   const [clears, setClears] = useState({ });
