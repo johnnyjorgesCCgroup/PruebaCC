@@ -7,52 +7,50 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js";
 import "admin-lte/dist/js/adminlte.min.js";
 import $ from "jquery";
-import { Link } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
 
 const Menu = () => {
-  
   const treeviewRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
 
   useEffect(() => {
-    $(treeviewRef.current).Treeview('init');
-    $(treeviewRef.current).on('treeview:opened', (event, openedItem) => {
+    $(treeviewRef.current).Treeview("init");
+    $(treeviewRef.current).on("treeview:opened", (event, openedItem) => {
       if (activeItem && activeItem !== openedItem) {
-        $(activeItem).Treeview('close');
+        $(activeItem).Treeview("close");
       }
       setActiveItem(openedItem);
     });
-    $(treeviewRef.current).on('treeview:closed', () => {
+    $(treeviewRef.current).on("treeview:closed", () => {
       setActiveItem(null);
     });
   }, [activeItem]);
-  
+
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       {/* Brand Logo */}
       <a href="index3.html" className="brand-link">
-        <img
+        {/*<img
           src="dist/img/AdminLTELogo.png"
           alt="AdminLTE Logo"
           className="brand-image img-circle elevation-3"
           style={{ opacity: ".8" }}
-        />
-        <span className="brand-text font-weight-light">AdminLTE 3</span>
+        />*/}
+        <span className="brand-text font-weight-light">CCGroup Logistica</span>
       </a>
       {/* Sidebar */}
       <div className="sidebar">
         {/* Sidebar user panel (optional) */}
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
           <div className="image">
-            <img
+            {/*<img
               src="dist/img/user2-160x160.jpg"
               className="img-circle elevation-2"
               alt="User Image"
-            />
+            />*/}
           </div>
           <div className="info">
-            <a href="#" className="d-block">
+            <a href="#" style={{ display: "flex", textAlign: "center" }}>
               Alexander Pierce
             </a>
           </div>
@@ -82,10 +80,8 @@ const Menu = () => {
             role="menu"
             data-accordion="true"
           >
-
             <li className="nav-item">
-
-              <ul className="nav nav-treeview" >
+              <ul className="nav nav-treeview">
                 <li className="nav-item">
                   <a href="./index.html" className="nav-link">
                     <i className="far fa-circle nav-icon" />
@@ -95,7 +91,6 @@ const Menu = () => {
               </ul>
             </li>
 
-
             <li className="nav-item">
               <a href="#" className="nav-link">
                 <i className="nav-icon fas fa-solid fa-chart-simple" />
@@ -104,20 +99,21 @@ const Menu = () => {
                   <i className="fas fa-angle-left right" />
                 </p>
               </a>
-              <ul className="nav nav-treeview nav-pills nav-sidebar flex-column"
-                         ref={treeviewRef} // Asigna el ref al elemento que deseas seleccionar
-                         data-widget="treeview"
-                         role="menu"
-                         data-accordion="false"
-                         >
+              <ul
+                className="nav nav-treeview nav-pills nav-sidebar flex-column"
+                ref={treeviewRef} // Asigna el ref al elemento que deseas seleccionar
+                data-widget="treeview"
+                role="menu"
+                data-accordion="false"
+              >
                 <li className="nav-item">
-                   <Link to="/" className="nav-link">
+                  <Link to="/" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Categoria</p>
                   </Link>
                 </li>
                 <li className="nav-item">
-                <Link to="/subcategory" className="nav-link">
+                  <Link to="/subcategory" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>SubCategoria</p>
                   </Link>
@@ -129,9 +125,9 @@ const Menu = () => {
                   </Link>
                 </li>
               </ul>
-            </li>   
+            </li>
 
-                        <li className="nav-item">
+            <li className="nav-item">
               <a href="#" className="nav-link">
                 <i className="nav-icon fas fa-solid fa-chart-simple" />
                 <p>
@@ -139,12 +135,13 @@ const Menu = () => {
                   <i className="fas fa-angle-left right" />
                 </p>
               </a>
-              <ul className="nav nav-treeview nav-pills nav-sidebar flex-column"
-                         ref={treeviewRef} // Asigna el ref al elemento que deseas seleccionar
-                         data-widget="treeview"
-                         role="menu"
-                         data-accordion="false"
-                         >
+              <ul
+                className="nav nav-treeview nav-pills nav-sidebar flex-column"
+                ref={treeviewRef} // Asigna el ref al elemento que deseas seleccionar
+                data-widget="treeview"
+                role="menu"
+                data-accordion="false"
+              >
                 <li className="nav-item">
                   <Link to="/user" className="nav-link">
                     <i className="far fa-circle nav-icon" />
@@ -152,8 +149,14 @@ const Menu = () => {
                   </Link>
                 </li>
               </ul>
-            </li> 
+            </li>
 
+            <a href="/login" className="nav-link">
+              <i className="nav-icon fas fa-solid fa-right-from-bracket" /> 
+              <p>
+                 Logout
+              </p>
+            </a>
           </ul>
         </nav>
         {/* /.sidebar-menu */}
