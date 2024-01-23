@@ -6,12 +6,14 @@ import "admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js";
 import "admin-lte/dist/js/adminlte.min.js";
+import { useAuth } from './AuthContext';
 import $ from "jquery";
 import { Link } from "react-router-dom";
 
 const Menu = () => {
   const treeviewRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
+  const { isLoggedIn, logout } = useAuth();
 
   useEffect(() => {
     $(treeviewRef.current).Treeview("init");
@@ -25,6 +27,11 @@ const Menu = () => {
       setActiveItem(null);
     });
   }, [activeItem]);
+
+  const handleLogout = () => {
+    logout();
+  };
+
 
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
@@ -151,11 +158,16 @@ const Menu = () => {
               </ul>
             </li>
 
-            <a href="/login" className="nav-link">
-              <i className="nav-icon fas fa-solid fa-right-from-bracket" /> 
-              <p>
-                 Logout
-              </p>
+            <a
+              href="/login"
+              onClick={() => {
+                handleLogout();
+                history.push("/login");
+              }}
+              className="nav-link"
+            >
+              <i className="nav-icon fas fa-solid fa-right-from-bracket" />
+              <p>Logout</p>
             </a>
           </ul>
         </nav>
