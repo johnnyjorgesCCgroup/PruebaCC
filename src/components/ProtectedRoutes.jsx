@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import IndexCategory from '../views/Category/Index';
 import IndexSubCategory from '../views/SubCategory/index';
 import IndexProduct from '../views/Product/index';
 import IndexUser from '../views/User/index';
+import IndexTicket from '../views/Ticket/index';
 import './ProtectedRoutes.css'
 
 
@@ -37,6 +38,7 @@ const ProtectedRoutes = () => {
       <Route path="/category" element={<IndexCategory />} />
       <Route path="/subcategory" element={<IndexSubCategory />} />
       <Route path="/user" element={<IndexUser />} />
+      <Route path="/ticket" element={<IndexTicket />} />
     </Routes>
   );
 };

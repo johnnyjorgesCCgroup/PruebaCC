@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "admin-lte/dist/css/adminlte.min.css";
 import "admin-lte/plugins/fontawesome-free/css/all.min.css";
@@ -6,7 +6,7 @@ import "admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js";
 import "admin-lte/dist/js/adminlte.min.js";
-import { useAuth } from './AuthContext';
+import { useAuth } from "./AuthContext";
 import $ from "jquery";
 import { Link } from "react-router-dom";
 
@@ -14,6 +14,7 @@ const Menu = () => {
   const treeviewRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
   const { isLoggedIn, logout } = useAuth();
+  const storedUsername = localStorage.getItem('username');
 
   useEffect(() => {
     $(treeviewRef.current).Treeview("init");
@@ -32,34 +33,27 @@ const Menu = () => {
     logout();
   };
 
-
   return (
+    <div className="app-container">
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       {/* Brand Logo */}
-      <a href="index3.html" className="brand-link">
-        {/*<img
-          src="dist/img/AdminLTELogo.png"
+      <a href="/" className="brand-link text-center">
+        <img 
+          src="../public/logoblanco.png"
           alt="AdminLTE Logo"
-          className="brand-image img-circle elevation-3"
+          className="brand-image elevation-3 float-lg-none"
           style={{ opacity: ".8" }}
-        />*/}
-        <span className="brand-text font-weight-light">CCGroup Logistica</span>
+        />
+        <br></br>
       </a>
       {/* Sidebar */}
       <div className="sidebar">
         {/* Sidebar user panel (optional) */}
-        <div className="user-panel mt-3 pb-3 mb-3 d-flex">
-          <div className="image">
-            {/*<img
-              src="dist/img/user2-160x160.jpg"
-              className="img-circle elevation-2"
-              alt="User Image"
-            />*/}
-          </div>
+        <div className="user-panel" style={{textAlign:"center"}}>
           <div className="info">
-            <a href="#" style={{ display: "flex", textAlign: "center" }}>
-              Alexander Pierce
-            </a>
+            <p href="#" style={{ color:"#D6B855", textAlign: "center" }}>
+              <b>{isLoggedIn ? storedUsername : "Invitado"}</b>
+            </p>
           </div>
         </div>
         {/* SidebarSearch Form */}
@@ -158,23 +152,50 @@ const Menu = () => {
               </ul>
             </li>
 
-            <a
-              href="/login"
+            <li
+              className={`nav-item ${
+                location.pathname === "/ticket" ? "menu-open" : ""
+              }`}
+            >
+              <a href="#" className="nav-link">
+                <i className="nav-icon fas fa-edit" />
+                <p>
+                  Formulario
+                  <i className="fas fa-angle-left right" />
+                </p>
+              </a>
+              <ul className="nav nav-treeview">
+                <li className="nav-item">
+                  <Link
+                    to="/ticket"
+                    className={`nav-link ${
+                      location.pathname === "/ticket" ? "active" : ""
+                    }`}
+                  >
+                    <i className="far fa-circle nav-icon" />
+                    <p>Ticket</p>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
+            <Link
               onClick={() => {
                 handleLogout();
-                history.push("/login");
+                history.push("/");
               }}
               className="nav-link"
             >
               <i className="nav-icon fas fa-solid fa-right-from-bracket" />
               <p>Logout</p>
-            </a>
+            </Link>
           </ul>
         </nav>
         {/* /.sidebar-menu */}
       </div>
       {/* /.sidebar */}
     </aside>
+    </div>
   );
 };
 

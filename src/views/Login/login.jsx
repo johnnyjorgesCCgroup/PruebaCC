@@ -40,9 +40,11 @@ const Login = () => {
 
         // Almacena el token en localStorage
         localStorage.setItem('token', loginData.access_token);
+        localStorage.setItem('username', username);
 
         // Muestra el token en la consola
         console.log('Token almacenado en LocalStorage:', loginData.token);
+        console.log('Usuario almacenado en LocalStorage:', username);
 
 
         navigate('/');
