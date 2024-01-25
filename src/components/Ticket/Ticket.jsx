@@ -214,7 +214,7 @@ export default function Ticket() {
   return (
     <div className="content-wrapper">
       {/* /TICKET*/}
-      <div className="card">
+      <div className="card" style={{padding:20}}>
         <div className="card card-outline">
           <div className="card-header border-0">
             <h3 className="card-title">
@@ -605,7 +605,7 @@ export default function Ticket() {
       </div>
 
       {/* /TICKET STATUS */}
-      <div className="card">
+      <div className="card"  style={{padding:20}}>
         <div className="card card-outline">
           <div className="card-header border-0">
             <h3 className="card-title">
