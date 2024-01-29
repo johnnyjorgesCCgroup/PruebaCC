@@ -1,0 +1,25 @@
+{
+    "proveedores": [
+        {
+            "id": "1",
+            "name": "prueba1",
+            "descripcion": "descripcion1"
+        },
+        {
+            "id": "2",
+            "name": "prueba2",
+            "descripcion": "descripcion2"
+        },
+        {
+            "id": "3",
+            "name": "prueba3",
+            "descripcion": "descripcion3"
+        },
+        {
+            "id": "4",
+            "name": "prueba4",
+            "descripcion": "descripcion4"
+        }
+        
+    ]
+}
