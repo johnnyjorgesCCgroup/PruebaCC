@@ -3,8 +3,20 @@ import Axios from "./AxiosTablesPrueba";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@mui/material";
+import ModalCreate from "./ModalCreate";
+import { useState } from "react";
 
 export default function ContentIngresos() {
+  
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
   return (
     <div className="content-wrapper" style={{padding:20}}>
       <div className="content-header">
@@ -40,12 +52,14 @@ export default function ContentIngresos() {
             variant="contained"
             color="primary"
             startIcon={<FontAwesomeIcon icon={faPlusCircle} />}
+            onClick={handleOpenModal}
           >
             Crear Worker
           </Button>
           </div>
         </div>
         <Axios />
+        <ModalCreate open={openModal} handleClose={handleCloseModal} />
       </div>
     </div>
   );
