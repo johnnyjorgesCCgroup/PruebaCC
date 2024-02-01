@@ -8,7 +8,6 @@ import {
   AlertTitle,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import Axios from "axios";
 import AxiosTablesPrueba from "./AxiosTablesPrueba";
 
 const style = {
@@ -43,26 +42,34 @@ const ModalCreate = ({ open, handleClose }) => {
 
   const handleCreateWorker = async () => {
     try {
-      const response = await Axios.post(
-        "https://api.cvimport.com/api/worker",
-        newWorker
-      );
-      console.log("Trabajador creado exitosamente", response.data);
-      handleClose();
-      setConfirmation(
+      const response = await fetch("https://api.cvimport.com/api/worker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newWorker),
+      });
+
+      if (response.ok) {
+        console.log("Trabajador creado exitosamente");
+        handleClose();
+        setConfirmation(
           <Alert severity="success">
             <AlertTitle>Success</AlertTitle>
             Trabajador creado exitosamente
           </Alert>
-      );
-      AxiosTablesPrueba.getList();
+        );
+        AxiosTablesPrueba.getList()
+      } else {
+        throw new Error(`Error al crear el trabajador: ${response.statusText}`);
+      }
     } catch (error) {
       console.error("Error al crear el trabajador", error);
       setConfirmation(
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            Error al crear al trabajador
-          </Alert>
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          Error al crear al trabajador
+        </Alert>
       );
     }
   };

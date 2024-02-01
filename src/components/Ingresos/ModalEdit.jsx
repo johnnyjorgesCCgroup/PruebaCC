@@ -8,7 +8,6 @@ import {
   AlertTitle,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import Axios from "axios";
 import AxiosTablesPrueba from "./AxiosTablesPrueba";
 
 const style = {
@@ -56,22 +55,29 @@ const ModalEdit = ({ open, handleClose, workerToEdit }) => {
 
   const handleEditWorker = async () => {
     try {
-      const response = await Axios.put(
-        `https://api.cvimport.com/api/worker/${workerToEdit.id}`,
-        editedWorker
-      );
-      console.log("Trabajador editado exitosamente", response.data);
-      handleClose();
-      setConfirmation(
-        <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          Trabajador editado exitosamente
-        </Alert>
-      );
-      AxiosTablesPrueba.getList();
+      const response = await fetch(`https://api.cvimport.com/api/worker/${workerToEdit.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedWorker),
+      });
+
+      if (response.ok) {
+        console.log("Trabajador editado exitosamente");
+        handleClose();
+        setConfirmation(
+          <Alert severity="success">
+            <AlertTitle>Success</AlertTitle>
+            Trabajador editado exitosamente
+          </Alert>
+        );
+        AxiosTablesPrueba.getList();
+      } else {
+        throw new Error(`Error al editar el trabajador: ${response.statusText}`);
+      }
     } catch (error) {
       console.error("Error al editar el trabajador", error);
-      console.log("Detalles del error:", error.response.data); // Agregar esta línea
       setConfirmation(
         <Alert severity="error">
           <AlertTitle>Error</AlertTitle>

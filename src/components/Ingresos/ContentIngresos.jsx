@@ -9,6 +9,7 @@ import { useState } from "react";
 export default function ContentIngresos() {
   
   const [openModal, setOpenModal] = useState(false);
+  
 
   const handleOpenModal = () => {
     setOpenModal(true);

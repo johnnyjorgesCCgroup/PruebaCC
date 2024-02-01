@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import ModalEdit from "./ModalEdit";
 import ModalDelete from "./ModalDetele";
 import PropTypes from "prop-types";
 import { DataGrid, GridToolbar, GridToolbarQuickFilter } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 
+// Función que realiza la solicitud para obtener la lista de trabajadores
+export const getList = async (setLista) => {
+  try {
+    const response = await fetch("https://api.cvimport.com/api/worker");
+    if (response.ok) {
+      const data = await response.json();
+      setLista(data.data);
+    } else {
+      console.error("Error al obtener la lista de trabajadores", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error al obtener la lista de trabajadores", error);
+  }
+};
 
 const DataTable = () => {
   const [lista, setLista] = useState([]);
@@ -14,16 +27,6 @@ const DataTable = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedWorkerToDelete, setSelectedWorkerToDelete] = useState(null);
 
-  const getList = async () => {
-    try {
-      const response = await axios.get("https://api.cvimport.com/api/worker");
-      setLista(response.data.data);
-    } catch (error) {
-      console.error("Error al obtener la lista de trabajadores", error);
-      // Maneja el error según tus necesidades
-    }
-  };
-
   const handleOpenModal = (worker) => {
     setSelectedWorker(worker);
     setOpenModal(true);
@@ -31,7 +34,7 @@ const DataTable = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    getList();
+    getList(setLista); // Pasamos setLista como parámetro
   };
 
   const handleOpenDeleteModal = (worker) => {
@@ -41,11 +44,11 @@ const DataTable = () => {
 
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
-    getList();
+    getList(setLista); // Pasamos setLista como parámetro
   };
 
   useEffect(() => {
-    getList();
+    getList(setLista); // Pasamos setLista como parámetro
   }, []);
 
   const columns = [
@@ -114,6 +117,7 @@ const DataTable = () => {
     </div>
   );
 };
+
 ModalEdit.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
