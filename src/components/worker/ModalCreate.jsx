@@ -3,12 +3,15 @@ import {
   Button,
   Modal,
   TextField,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
   Box,
   Alert,
   AlertTitle,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import AxiosTablesPrueba from "./AxiosTablesPrueba";
 
 const style = {
   position: "absolute",
@@ -24,7 +27,7 @@ const style = {
   pb: 3,
 };
 
-const ModalCreate = ({ open, handleClose }) => {
+const ModalCreate = ({ open, handleClose, ...otherProps }) => {
   const [newWorker, setNewWorker] = useState({
     name: "",
     document_type: "",
@@ -39,6 +42,11 @@ const ModalCreate = ({ open, handleClose }) => {
     const { name, value } = e.target;
     setNewWorker((prevWorker) => ({ ...prevWorker, [name]: value }));
   };
+
+  const handleSelectChange = (event) => {
+    const { value } = event.target;
+    setNewWorker((prevWorker) => ({ ...prevWorker, document_type: value }));
+  };  
 
   const handleCreateWorker = async () => {
     try {
@@ -59,7 +67,6 @@ const ModalCreate = ({ open, handleClose }) => {
             Trabajador creado exitosamente
           </Alert>
         );
-        AxiosTablesPrueba.getList()
       } else {
         throw new Error(`Error al crear el trabajador: ${response.statusText}`);
       }
@@ -80,6 +87,7 @@ const ModalCreate = ({ open, handleClose }) => {
       onClose={handleClose}
       aria-labelledby="child-modal-title"
       aria-describedby="child-modal-description"
+      {...otherProps}
     >
       <Box sx={{ ...style, width: 400 }}>
         <h2 id="child-modal-title">Crear Nuevo Worker</h2>
@@ -92,7 +100,7 @@ const ModalCreate = ({ open, handleClose }) => {
           value={newWorker.name}
           onChange={handleInputChange}
         />
-        <TextField
+        {/*<TextField
           label="Tipo de Documento"
           variant="outlined"
           fullWidth
@@ -100,7 +108,20 @@ const ModalCreate = ({ open, handleClose }) => {
           name="document_type"
           value={newWorker.document_type}
           onChange={handleInputChange}
-        />
+  />*/}
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Tipo de Documento</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={newWorker.document_type}
+            onChange={handleSelectChange}
+          >
+            <MenuItem value={"DNI"}>DNI</MenuItem>
+            <MenuItem value={"RUC"}>RUC</MenuItem>
+            <MenuItem value={"PTP"}>PTP</MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           label="Numero de Documento"
           variant="outlined"

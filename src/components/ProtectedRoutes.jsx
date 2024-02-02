@@ -6,7 +6,8 @@ import IndexSubCategory from '../views/SubCategory/index';
 import IndexProduct from '../views/Product/index';
 import IndexUser from '../views/User/index';
 import IndexTicket from '../views/Ticket/index';
-import IndexIngresos from '../views/Ingresos/Index';
+import IndexWorker from '../views/Worker/Index';
+import IndexWarehouse from '../views/Warehouse/Index';
 import './ProtectedRoutes.css'
 
 
@@ -40,7 +41,8 @@ const ProtectedRoutes = () => {
       <Route path="/subcategory" element={<IndexSubCategory />} />
       <Route path="/user" element={<IndexUser />} />
       <Route path="/ticket" element={<IndexTicket />} />
-      <Route path="/proveedores" element={<IndexIngresos />} />
+      <Route path="/worker" element={<IndexWorker />} />
+      <Route path="/warehouse" element={<IndexWarehouse />} />
     </Routes>
   );
 };

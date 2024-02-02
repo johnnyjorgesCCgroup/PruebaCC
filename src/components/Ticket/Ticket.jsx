@@ -10,7 +10,7 @@ export default function Ticket() {
 
   const handleTicketCreated = () => {
     // Actualizar estado de los tickets después de crear un nuevo ticket
-    fetch("https://apiticketccgroup.onrender.com/tickets")
+    fetch("https://apiticketccgroup.onrender.com/tickets", {mode: "no-cors"})
       .then((response) => response.json())
       .then((data) => {
         setTickets(data);

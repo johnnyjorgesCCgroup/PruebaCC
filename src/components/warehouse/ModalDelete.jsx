@@ -7,7 +7,6 @@ import {
   AlertTitle,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import axios from "axios";
 
 const style = {
   position: "absolute",
@@ -33,18 +32,28 @@ const ModalDelete = ({ open, handleClose, workerToDelete }) => {
         return;
       }
   
-      const response = await axios.delete(
-        `https://api.cvimport.com/api/worker/${workerToDelete.id}`
-      );
+      const response = await fetch(`https://api.cvimport.com/api/warehouse/${workerToDelete.id}`, {
+        method: 'DELETE',
+      });
   
-      console.log("Trabajador eliminado exitosamente", response.data.data);
-      handleClose();
-      setConfirmation(
-        <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          Trabajador eliminado exitosamente
-        </Alert>
-      );
+      if (response.ok) {
+        console.log("Trabajador eliminado exitosamente");
+        handleClose();
+        setConfirmation(
+          <Alert severity="success">
+            <AlertTitle>Success</AlertTitle>
+            Trabajador eliminado exitosamente
+          </Alert>
+        );
+      } else {
+        console.error("Error al eliminar el trabajador", response.statusText);
+        setConfirmation(
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            Error al eliminar al trabajador
+          </Alert>
+        );
+      }
     } catch (error) {
       console.error("Error al eliminar el trabajador", error);
       setConfirmation(
@@ -55,6 +64,7 @@ const ModalDelete = ({ open, handleClose, workerToDelete }) => {
       );
     }
   };
+  
 
   return (
     <Modal
@@ -64,9 +74,9 @@ const ModalDelete = ({ open, handleClose, workerToDelete }) => {
       aria-describedby="child-modal-description"
     >
       <Box sx={{ ...style, width: 400 }}>
-        <h2 id="child-modal-title">Eliminar Worker</h2>
+        <h2 id="child-modal-title">Eliminar Warehouse</h2>
         <p>
-          ¿Estás seguro de que quieres eliminar al trabajador{' '}
+          ¿Estás seguro de que quieres eliminar al deposito {' '}
           <strong>{workerToDelete.name}</strong>?
         </p>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>

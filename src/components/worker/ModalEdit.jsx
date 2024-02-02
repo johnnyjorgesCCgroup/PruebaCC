@@ -8,7 +8,6 @@ import {
   AlertTitle,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import AxiosTablesPrueba from "./AxiosTablesPrueba";
 
 const style = {
   position: "absolute",
@@ -36,17 +35,31 @@ const ModalEdit = ({ open, handleClose, workerToEdit }) => {
   const [confirmation, setConfirmation] = useState(null);
 
   useEffect(() => {
+    console.log("WorkerToEdit:", workerToEdit);
     if (workerToEdit) {
-      // Si hay un trabajador para editar, actualiza el estado con sus datos
-      setEditedWorker({
+      // Utilizamos un callback en setEditedWorker para garantizar que se actualice correctamente
+      console.log("Setting editedWorker:", {
+        ...editedWorker,
         name: workerToEdit.name || "",
         document_type: workerToEdit.document_type || "",
         document_number: workerToEdit.document_number || "",
         address: workerToEdit.address || "",
         phone_number: workerToEdit.phone_number || "",
       });
+      setEditedWorker((prevWorker) => ({
+        ...prevWorker,
+        name: workerToEdit.name || "",
+        document_type: workerToEdit.document_type || "",
+        document_number: workerToEdit.document_number || "",
+        address: workerToEdit.address || "",
+        phone_number: workerToEdit.phone_number || "",
+      }));
     }
   }, [workerToEdit]);
+  
+
+
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -72,7 +85,6 @@ const ModalEdit = ({ open, handleClose, workerToEdit }) => {
             Trabajador editado exitosamente
           </Alert>
         );
-        AxiosTablesPrueba.getList();
       } else {
         throw new Error(`Error al editar el trabajador: ${response.statusText}`);
       }
