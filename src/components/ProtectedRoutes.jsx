@@ -9,6 +9,7 @@ import IndexTicket from '../views/Ticket/index';
 import IndexWorker from '../views/Worker/Index';
 import IndexWarehouse from '../views/Warehouse/Index';
 import IndexHooks from '../views/Hooks/Index';
+import IndexDashboardProducts from '../views/Dashboard/index';
 import './ProtectedRoutes.css'
 
 
@@ -45,6 +46,7 @@ const ProtectedRoutes = () => {
       <Route path="/worker" element={<IndexWorker />} />
       <Route path="/warehouse" element={<IndexWarehouse />} />
       <Route path="/hooks" element={<IndexHooks />} />
+      <Route path="/dproducts" element={<IndexDashboardProducts />} />
     </Routes>
   );
 };

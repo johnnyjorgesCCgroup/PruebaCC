@@ -1,8 +1,10 @@
 import React from 'react';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider } from './components/AuthContext';
 import Login from './views/Login/login';
 import ProtectedRoutes from './components/ProtectedRoutes';
+
 
 
 const App = () => {
@@ -20,5 +22,12 @@ const App = () => {
     </AuthProvider>
   );
 };
+
+const root = createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
 export default App;
